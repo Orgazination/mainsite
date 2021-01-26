@@ -1,2 +1,4 @@
 # mainsite
-the cool website, you know the one that is very cool
+take it, fuck with it I don't care.
+
+Everything should be commented so it's nice and easy to understand (easter eggs not included)
