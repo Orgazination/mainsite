@@ -1,0 +1,92 @@
+@charset "UTF-8";
+/* CSS Document */
+@import url(https://fonts.googleapis.com/css?family=Orbitron:400,700|Jura:400,600);
+
+*{
+	margin:0;
+	padding:0;
+	letter-spacing:8px;
+	-webkit-font-smoothing: none;
+	-moz-osx-font-smoothing: none;
+
+	
+	}
+
+a {
+	text-decoration:none;
+	
+	}
+
+a:link {
+	color:#d2738a;
+	}
+	
+a:visited {
+	color:#d2738a;
+	}
+	
+a:hover {
+	color:#d2738a;
+	text-decoration:underline;
+	}
+	
+a:active {
+	color:#d2738a;
+	}
+
+body {
+	background-color:#000000;
+	margin:auto;
+	width:70%;
+	text-align:left;
+	letter-spacing:8px;
+	padding-top:10px;	
+	font-family: sans-serif;
+	}
+
+p {
+    margin-left:25px;
+    letter-spacing:4px;
+	font-size:18px;
+    color: #ffffff;
+	
+	}
+h2 {
+	font-family: 'Orbitron', Verdana, Geneva, sans-serif;
+	text-align: center;
+	color: #78bbf6;
+}
+
+h3 {
+	font-family: 'Orbitron', Verdana, Geneva, sans-serif;
+	text-align: center;
+	color: #78bbf6;
+}
+    
+code {
+    background-color: #666666;
+    border-radius: 3px;
+    font-family: courier, monospace;
+    padding: 0 3px;
+    color: #ffffff;
+}
+
+
+
+.di1{
+	border: 2px solid #34eb9e;
+	margin:auto;
+	width:80%;
+	text-align:center;
+	letter-spacing:8px;
+	padding-top:10px;	
+}
+
+.di2{
+    border: 2px solid #3449eb;
+	margin:auto;
+	width:80%;
+	text-align:center;
+	letter-spacing:8px;
+	padding-top:10px;	
+}

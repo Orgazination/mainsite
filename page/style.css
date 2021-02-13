@@ -1,0 +1,76 @@
+@charset "UTF-8";
+@import url(https://fonts.googleapis.com/css?family=Orbitron:400,700|Jura:400,600);
+
+*{
+	margin:0;
+	padding:0;
+	letter-spacing:8px;
+	font-smooth: never;
+	-webkit-font-smoothing: none;
+	-moz-osx-font-smoothing: none;
+
+	}
+
+a {
+	text-decoration:none;
+	
+	}
+
+a:link {
+	color:#d2738a;
+	}
+	
+a:visited {
+	color:#d2738a;
+	}
+	
+a:hover {
+	color:#d2738a;
+	animation: wiredB2 1s ease-out infinite;
+	text-decoration:underline;
+	}
+	
+a:active {
+	color:#d2738a;
+	}
+
+body {
+	background-image:url(static/city.png);
+	background-size: cover;
+	background-color:#24003d;
+	font-family: 'Jura', Verdana, Geneva, sans-serif;
+	color:#24003d;	
+	
+	}
+
+.content {
+	width:800px;
+    position: relative;
+	height:auto;
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:15px;
+	text-align:left;
+	letter-spacing:8px;
+	padding-top:0;
+
+	
+	}
+
+.left{
+  position: absolute;
+  top: 600px;
+  left: 660px;
+  overflow-x: hidden;
+  padding: 0 0;
+  transform: rotate(90deg);
+}
+
+.right{
+  position: absolute;
+  top: 600px;
+  right: 660px;
+  overflow-x: hidden;
+  padding: 0 0;
+  transform: rotate(-90deg);
+}

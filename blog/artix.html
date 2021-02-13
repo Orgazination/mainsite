@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html lang=en>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=0.5">
+<meta name="description" content="" />
+<meta name="keywords" content="">
+<meta name="author" content="cleoclast">
+<link rel="icon" type="image/png" href="../static/favicon.png">
+<title>Installing Artix</title>
+<link rel="stylesheet" type="text/css" href="/blog/style.css">
+</head>
+
+<body>
+<div>
+
+	<a href="/blog/">Home</a>
+
+</div><br />
+
+<div>
+
+	<h2>Installing Artix linux</h2><br><br>
+
+	<h3>why not Arch?</h3><br>
+
+	<p>Because minimalism is the key and systemd isn't that. (and I prefer openrc...)</p><br><br>
+
+
+	<h3>BIOS settings</h3><br>
+
+	<p>You can disable UEFI if you want though I noticed that my pc boots a bit faster with UEFI, so it might be the case for you.<br>Check if you have optimized settings for Windows that you can disabled, depends on the motherboard.<br> If you are using a laptop you'll probably have to stick with UEFI.</p><br><br>
+
+
+
+	<h3>make a USB flash drive</h3><br>
+
+	<p>Go to the <a href="https://artixlinux.org/download.php" target="_blank">Artix</a> website and download an ISO file that suits you (I chose the openrc one)<br>flash the ISO on a USB drive with <a href="https://www.balena.io/etcher/" target="_blank">Balena etcher</a> (or anything you prefer) </p><br><br>
+
+	<h3>Booting</h3><br>
+
+	<p>You checked BIOS settings so I assume you know how to boot to a USB drive but be careful your pc might detect your USB drive twice one with UEFI one without. Choose the one that suits you.<br>you will get a little menu to configure your timezone, keyboard layout and language.<br> Once you set that all up to match your case boot from cd/dvd/iso Artix and this is where the fun stuff begins.<br>login with the username and password given and login as root with <br><code>su</code><br>(there are no root password) check your disks and choose which one you're gonna install artix on<br>
+	<code>lsblk</code><br>
+	I chose "sda" on my PC (imma continue the guide with sda, note that you probably don't have the same disc name(don't be stupid)).<br></p><br><br>
+
+	<h3>Partitioning</h3><br>
+	<center><code>fdisk /dev/sda</code></center><br><br>
+	<div class="di1">
+
+    	<p>NO UEFI<br>press o to create a msdos partition table.<br>Make a new partition with a bootable flag of 128M Then you can use everything else in another partition so your whole system is in the same place HOWEVER, I suggest making a 30 - 50G partition for the system and the rest of your disk in another partition that'll contain your personal files (you'll see why later) but at the end of the day you do what you want.<br>Detailed steps here:</p><br><center><img src="/blog/images/msdosp.PNG"><br><img src="/blog/images/msdosp2.PNG"></center><br>
+    	<p>Then press w to confirm the changes then format the partitions to ext4 (so linux can read them)<br><code>mkfs.ext4 /dev/sda1</code><br><code>mkfs.ext4 /dev/sda2</code></p>
+
+	</div><br><br>
+
+	<div class="di2">
+
+    	<p>WITH UEFI<br>Press g to create a gtp partition table<br>Make a new partition of 128M and change its type to 1 aka EFI partition. Then you can use everything else in another partition so your whole system is in the same place HOWEVER, I suggest making a 30 - 50G partition for the system and the rest of your disk in another partition that'll contain your personal files (you'll see why later) but at the end of the day you do what you want.<br>Detailed steps here:</p><br><center><img src="/blog/images/gptp.PNG"><br><img src="/blog/images/gptp2.PNG"></center><br><p>Then type w to confirm the changes then format the partitions to ext4 (so linux can read them) except the EFI one which needs to be formated to fat32<br><code>mkfs.fat -F32 /dev/sda1</code><br><code>mkfs.ext4 /dev/sda2</code></p>
+
+	</div><br><br>
+
+	<p>REGARDING SWAP PARTITIONS<br>You do not need a swap partition at all.<br>I suggest a swapfile instead because if you ever want to get rid of swap for some reason it will be easier to delete a file than a partition (and resizing everything)<br>HOWEVER, If you have 6Gb or more RAM you probably do not need any swap at all(unless you plan on using all your RAM at once)<br>You'll see how to make a swap file later in the guide.<br><br>Now we mount everybody like so<br><br><code>mount /dev/sda2 /mnt</code><br><code>mkdir /mnt/boot</code><br><code>mount /dev/sda1 /mnt/boot</code><br><code>mkdir /mnt/home</code><br><code>mount /dev/sda3 /mnt/home</code><br><br>You can run <code>lsblk</code> again when you are done to check if everything's good. It should look like this</p><br><img src="/blog/images/lsblk.PNG"><br><br>
+
+
+	<h3>Installing the system</h3><br>
+
+	<p>artix is easy to install at this point, one command is enough<br><br><code>basestrap /mnt base base-devel linux linux-firmware openrc nano</code><br><br>Yes we're using nano for now. instead of linux you can put linux-hardened to get a more secure kernel or linux-lts in the command to install the long time support kernel if this is what you want. Instead of openrc you can put runit or s6 if this is what you want to use<br>Now you gotta tell linux how to boot those partition<br><br><code>fstabgen -U /mnt >> /mnt/etc/fstab</code><br><br>Then you enter the mainframe, literally<br><br><code>artix-chroot /mnt /bin/bash</code></p><br><br>
+
+
+	<h3>Configuring the system</h3><br>
+
+	<p><code>pacman -S networkmanager-openrc grub</code><br><br> or networkmanager-runit or networkmanager-s6<br>Now set it up to launch at boot, for openrc it's <br><code>rc-update add NetworkManager</code><br><br>Now set up your locale<br><code>nano /etc/locale.gen</code><br>Uncomment the locale you wish to use<br><br><code>locale-gen</code><br><br><code>nano /etc/locale.conf</code><br><br>in this blank file add your locale<br><br><center><img src="/blog/images/locale.PNG"></center></p><br><br><p>set your timezone with this command<br><br><code>ln -sf /usr/share/zoneinfo/Region/City /etc/localtime</code></p><br>
+
+
+	<h3>Install grub</h3><br>
+	<div class="di1">
+	<p>NO UEFI<br>	
+	<code>grub-install /dev/sda</code></p></div><br><br>
+	<div class="di2">
+	<p>WITH UEFI<br>
+	<code>grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub</code></p></div><br><p>generate grub config <code>grub-mkconfig -o /boot/grub/grub.cfg</code></p><br>
+
+	<h3>Make a swap file</h3><br>
+	<p><code>fallocate -l 2G /swapfile</code><br>you can make the swapfile any size you want but consider <a href="https://www.redhat.com/en/blog/do-we-really-need-swap-modern-systems" target="_blank">this</a><br>
+	<code>chmod 600 /swapfile<br>
+	mkswap /swapfile<br>
+	echo '/swapfile none swap sw 0 0' | tee /etc/fstab<br>
+	cat /etc/fstab</code> verify if it got added to your fstab file<br><br></p>
+
+	<h3>Finishing up</h3>
+	<p><code>passwd</code> change the root password<br>
+	let's give a name to our machine<br>
+	<code>nano /etc/hostname</code><br>this will open a blank file, put the name of your machine in it without quotation marks.<br>
+	<code>pacman -S dhcpcd</code> Let's do the same for your network.<br>
+	<code>nano /etc/hosts</code> fill out this file like so<br>
+	<center><img src="/blog/images/hosts.PNG"></center><br></p>
+	<p>we can reboot the system now to do further configuration but first <code>exit</code> the mainframe<br>
+	and unmount the partitions we worked on<br><code>umount -R /mnt</code><br>Now we can <code>reboot</code></p>
+
+	<h3>Reboot the system</h3><br>
+	<p>now we can add a user<br><code>useradd -mg wheel name_of_user</code><br>and set a password for it<br><code>passwd name_of_user</code><br>I also recommend using doas instead of sudo because of <a href="https://www.qualys.com/2021/01/26/cve-2021-3156/baron-samedit-heap-based-overflow-sudo.txt" target="_blank">this</a><br><code>pacman -R sudo<br>pacman -S opendoas</code><br>And this is how to add users as root with doas<br><code>nano /etc/doas.conf</code> which will open a blank file, add<br><code>permit name_of_user as root</code> to do just that. You can also install htop and neofetch of course and the basics are done! just need to rice now...(and do some more configs  based on what you want to use)<br>
+	<br><br><br><br><br><br><br><br><br><br><br><br>
+
+</div> 
+
+</body>
+
+</html>
