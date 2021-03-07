@@ -70,7 +70,7 @@
 
 	<h3>Configuring the system</h3><br>
 
-	<p><code>pacman -S networkmanager-openrc grub</code><br><br> or networkmanager-runit or networkmanager-s6<br>Now set it up to launch at boot, for openrc it's <br><code>rc-update add NetworkManager</code><br><br>Now set up your locale<br><code>nano /etc/locale.gen</code><br>Uncomment the locale you wish to use<br><br><code>locale-gen</code><br><br><code>nano /etc/locale.conf</code><br><br>in this blank file add your locale<br><br><center><img src="/blog/images/locale.PNG"></center></p><br><br><p>set your timezone with this command<br><br><code>ln -sf /usr/share/zoneinfo/Region/City /etc/localtime</code></p><br>
+	<p><code>pacman -S networkmanager-openrc dhcpcd-openrc grub</code><br><br> or networkmanager-runit or networkmanager-s6 etc...<br>Now set it up to launch at boot, for openrc it's <br><code>rc-update add NetworkManager</code><br><br>Now set up your locale<br><code>nano /etc/locale.gen</code><br>Uncomment the locale you wish to use<br><br><code>locale-gen</code><br><br><code>nano /etc/locale.conf</code><br><br>in this blank file add your locale<br><br><center><img src="/blog/images/locale.PNG"></center></p><br><br><p>set your timezone with this command:<br><br><code>ln -sf /usr/share/zoneinfo/Region/City /etc/localtime</code><br><br>Then edit <code>/etc/conf.d/hwclock</code> and replace UTC with local instead so the system will use the localtime file we just set.<br><br>You can also change your keymap in <code>/etc/conf.d/keymaps</code> if you don't have a qwerty keyboard.</p><br>
 
 
 	<h3>Install grub</h3><br>
@@ -79,7 +79,7 @@
 	<code>grub-install /dev/sda</code></p></div><br><br>
 	<div class="di2">
 	<p>WITH UEFI<br>
-	<code>grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub</code></p></div><br><p>generate grub config <code>grub-mkconfig -o /boot/grub/grub.cfg</code></p><br>
+	<code>pacman -S efibootmgr <br><br>grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub</code></p></div><br><p>generate grub config <code>grub-mkconfig -o /boot/grub/grub.cfg</code></p><br>
 
 	<h3>Make a swap file</h3><br>
 	<p><code>fallocate -l 2G /swapfile</code><br>you can make the swapfile any size you want but consider <a href="https://www.redhat.com/en/blog/do-we-really-need-swap-modern-systems" target="_blank">this</a><br>
@@ -91,15 +91,16 @@
 	<h3>Finishing up</h3>
 	<p><code>passwd</code> change the root password<br>
 	let's give a name to our machine<br>
-	<code>nano /etc/hostname</code><br>this will open a blank file, put the name of your machine in it without quotation marks.<br>
-	<code>pacman -S dhcpcd</code> Let's do the same for your network.<br>
-	<code>nano /etc/hosts</code> fill out this file like so<br>
-	<center><img src="/blog/images/hosts.PNG"></center><br></p>
+	<code>nano /etc/conf.d/hostname</code><br>put the name of your machine in the quotation marks<br>
 	<p>we can reboot the system now to do further configuration but first <code>exit</code> the mainframe<br>
 	and unmount the partitions we worked on<br><code>umount -R /mnt</code><br>Now we can <code>reboot</code></p>
 
 	<h3>Reboot the system</h3><br>
-	<p>now we can add a user<br><code>useradd -mg wheel name_of_user</code><br>and set a password for it<br><code>passwd name_of_user</code><br>I also recommend using doas instead of sudo because of <a href="https://www.qualys.com/2021/01/26/cve-2021-3156/baron-samedit-heap-based-overflow-sudo.txt" target="_blank">this</a><br><code>pacman -R sudo<br>pacman -S opendoas</code><br>And this is how to add users as root with doas<br><code>nano /etc/doas.conf</code> which will open a blank file, add<br><code>permit name_of_user as root</code> to do just that. You can also install htop and neofetch of course and the basics are done! just need to rice now...(and do some more configs  based on what you want to use)<br>
+	<p>now we can add a user<br><code>useradd name_of_user</code><br>and set a password for it<br><code>passwd name_of_user</code><br>I also recommend using doas instead of sudo because of <a href="https://www.qualys.com/2021/01/26/cve-2021-3156/baron-samedit-heap-based-overflow-sudo.txt" target="_blank">this</a><br><code>pacman -R sudo<br>pacman -S opendoas</code><br>And this is how to add users as root with doas<br><code>nano /etc/doas.conf</code> which will open a blank file, add<br><code>permit name_of_user as root</code> to do just that. You can also install htop and neofetch of course and the basics are done! just need to <a href="https://github.com/Orgazination/rice" target="_blank">rice</a> now...(and install your cool softwares based on what you want to use)<br>
+	<br><br>
+
+	<h3>One last note</h3><br>
+	<p>Artix linux uses only 1 repository on top of the arch ones (and all the AUR works).<br>This repo contains packages specific to the init system you chose that's why (you probably noticed) when we installed certain packages it looked like "package-openrc". DO NOT FORGET THIS! I remember hours of headaches because I forgot wpa_supplicant-openrc on my laptop and I don't want you to live the same nightmare. so yeah if something isn't working, you probably forgot the openrc (or runit or s6) version of the package be careful and happy computering.</p>
 	<br><br><br><br><br><br><br><br><br><br><br><br>
 
 </div> 
